@@ -7,8 +7,6 @@ PROJECT TITLE
 -------------
 End-to-End DevOps Pipeline for a Node.js Web Application
 
-(Optional: You may use any language you are comfortable with instead of Node.js.)
-
 
 PROJECT DESCRIPTION
 -------------------
@@ -68,7 +66,7 @@ SETUP INSTRUCTIONS (LOCAL)
 
   1. Clone the repository:
        git clone <your-github-repo-url>
-       cd <repository-folder>
+       cd DevOpsCapstone
 
   2. Install application dependencies:
        npm install
@@ -91,38 +89,7 @@ REPOSITORY CONTENTS (REQUIRED)
     - Application source code
     - Jenkinsfile
     - Dockerfile
-    - README.md (or this Readme.txt) with setup and run instructions
-
-
-DELIVERABLES CHECKLIST
-----------------------
-  1. Project Report (PDF or DOCX)
-       - Introduction (application and technologies)
-       - Architecture diagram (Git -> Jenkins -> Docker -> AWS -> Monitoring)
-       - Tools and services used
-       - Pipeline stages (Build, Test, Deploy, Monitor)
-       - Challenges and learnings
-       - Screenshots (Jenkins, Docker, AWS, monitoring dashboard)
-
-  2. Source Code
-       - GitHub repository link with all required files listed above
-
-  3. Pipeline Execution Proof
-       - Screenshot or 2-3 minute video showing:
-         * Jenkins build stages completing successfully
-         * Docker image creation and container run
-         * Deployment on AWS (EC2/S3, etc.)
-         * Monitoring dashboard (if applicable)
-
-  4. Deployment Link (Optional)
-       - Public URL or IP address of the application
-       - Screenshot proof if the link is not publicly accessible
-
-  5. README File (in Repository)
-       - Project title and description
-       - Tech stack
-       - Setup instructions (build/run locally)
-       - CI/CD flow explained briefly
+    - README.md with setup and run instructions
 
 
 PIPELINE STAGES (FOR REPORT)
