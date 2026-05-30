@@ -2,15 +2,24 @@ const express = require('express');
 const app = express();
 const request = require('request');
 const wikip = require('wiki-infobox-parser');
+const client = require('prom-client');
+
+// Prometheus - collect default metrics
+client.collectDefaultMetrics();
 
 //ejs
 app.set("view engine", 'ejs');
+
+// Prometheus - metrics endpoint
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', client.register.contentType);
+    res.end(await client.register.metrics());
+});
 
 //routes
 app.get('/', (req,res) =>{
     res.render('index');
 });
-
 app.get('/index', (req,response) =>{
     let url = "https://en.wikipedia.org/w/api.php"
     let params = {
@@ -20,12 +29,10 @@ app.get('/index', (req,response) =>{
         namespace: "0",
         format: "json"
     }
-
     url = url + "?"
     Object.keys(params).forEach( (key) => {
         url += '&' + key + '=' + params[key]; 
     });
-
     //get wikip search string
     request(url,(err,res, body) =>{
         if(err) {
@@ -45,9 +52,7 @@ app.get('/index', (req,response) =>{
                 }
             });
     });
-
     
 });
-
 //port
 app.listen(3000, console.log("Listening at port 3000..."))
