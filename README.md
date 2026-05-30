@@ -55,7 +55,7 @@ Prerequisites: - Node.js and npm installed - Docker installed - Git installed
    git clone <your-github-repo-url>
    cd DevOpsCapstone
 
-2. Install application dependencies:
+2. Install application dependencies using docker:
    npm install
 
 3. Run the application locally (without Docker):
