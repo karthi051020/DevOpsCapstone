@@ -20,6 +20,7 @@ app.get('/metrics', async (req, res) => {
 app.get('/', (req,res) =>{
     res.render('index');
 });
+
 app.get('/index', (req,response) =>{
     let url = "https://en.wikipedia.org/w/api.php"
     let params = {
@@ -29,12 +30,22 @@ app.get('/index', (req,response) =>{
         namespace: "0",
         format: "json"
     }
+
     url = url + "?"
     Object.keys(params).forEach( (key) => {
         url += '&' + key + '=' + params[key]; 
     });
+
+    // Added User-Agent header to comply with Wikipedia API policy
+    const options = {
+        url: url,
+        headers: {
+            'User-Agent': 'simple-nodejs-app/1.0.0 (https://github.com/rat9615/simple-nodejs-app)'
+        }
+    };
+
     //get wikip search string
-    request(url,(err,res, body) =>{
+    request(options,(err,res, body) =>{
         if(err) {
             response.redirect('404');
         }
@@ -54,5 +65,6 @@ app.get('/index', (req,response) =>{
     });
     
 });
+
 //port
 app.listen(3000, console.log("Listening at port 3000..."))
