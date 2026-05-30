@@ -6,7 +6,7 @@ pipeline {
         DOCKERHUB_REPO        = 'karthi051020/devops-capstone-proj'
         IMAGE_TAG             = "build-${BUILD_NUMBER}"
         APP_EC2_USER          = 'ubuntu'
-        APP_EC2_HOST          = '172.31.6.98'
+        APP_EC2_HOST          = '172.31.22.205'
         CONTAINER_NAME        = 'nodejs-app'
         APP_PORT              = '3000'
     }
