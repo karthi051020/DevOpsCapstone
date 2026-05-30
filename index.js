@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const request = require('request');
-const wikip = require('wiki-infobox-parser');
 const client = require('prom-client');
 
 // Prometheus - collect default metrics
@@ -17,26 +16,20 @@ app.get('/metrics', async (req, res) => {
 });
 
 //routes
-app.get('/', (req,res) =>{
+app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.get('/index', (req,response) =>{
-    let url = "https://en.wikipedia.org/w/api.php"
-    let params = {
-        action: "opensearch",
-        search: req.query.person,
-        limit: "1",
-        namespace: "0",
-        format: "json"
+app.get('/index', (req, response) => {
+    const person = req.query.person;
+
+    if (!person) {
+        return response.status(400).send('Please enter a person name');
     }
 
-    url = url + "?"
-    Object.keys(params).forEach( (key) => {
-        url += '&' + key + '=' + params[key]; 
-    });
+    // Use Wikipedia summary API directly
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(person)}`;
 
-    // User-Agent header to comply with Wikipedia API policy
     const options = {
         url: url,
         headers: {
@@ -44,38 +37,33 @@ app.get('/index', (req,response) =>{
         }
     };
 
-    //get wikip search string
-    request(options,(err,res, body) =>{
-        if(err) {
-            return response.status(404).send('Error fetching data from Wikipedia');
+    request(options, (err, res, body) => {
+        if (err) {
+            return response.status(500).send('Error fetching data from Wikipedia');
         }
 
         try {
-            result = JSON.parse(body);
+            const result = JSON.parse(body);
 
-            // Check if result exists
-            if (!result[3] || !result[3][0]) {
-                return response.status(404).send('No results found for: ' + req.query.person);
+            if (result.type === 'https://mediawiki.org/wiki/HyperSwitch/errors/not_found') {
+                return response.status(404).send('No results found for: ' + person);
             }
 
-            x = result[3][0];
-            x = x.substring(30, x.length); 
+            // Return clean summary result
+            const data = {
+                title: result.title,
+                description: result.description,
+                summary: result.extract,
+                thumbnail: result.thumbnail ? result.thumbnail.source : null,
+                url: result.content_urls ? result.content_urls.desktop.page : null
+            };
 
-            //get wikip json
-            wikip(x , (err, final) => {
-                if (err){
-                    return response.status(404).send('Could not parse Wikipedia data for: ' + req.query.person);
-                }
-                else{
-                    const answers = final;
-                    response.send(answers);
-                }
-            });
-        } catch(e) {
+            response.send(data);
+
+        } catch (e) {
             return response.status(500).send('Error parsing response: ' + e.message);
         }
     });
-    
 });
 
 // 404 handler
