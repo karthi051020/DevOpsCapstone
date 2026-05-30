@@ -36,7 +36,7 @@ app.get('/index', (req,response) =>{
         url += '&' + key + '=' + params[key]; 
     });
 
-    // Added User-Agent header to comply with Wikipedia API policy
+    // User-Agent header to comply with Wikipedia API policy
     const options = {
         url: url,
         headers: {
@@ -47,23 +47,40 @@ app.get('/index', (req,response) =>{
     //get wikip search string
     request(options,(err,res, body) =>{
         if(err) {
-            response.redirect('404');
+            return response.status(404).send('Error fetching data from Wikipedia');
         }
+
+        try {
             result = JSON.parse(body);
+
+            // Check if result exists
+            if (!result[3] || !result[3][0]) {
+                return response.status(404).send('No results found for: ' + req.query.person);
+            }
+
             x = result[3][0];
             x = x.substring(30, x.length); 
+
             //get wikip json
             wikip(x , (err, final) => {
                 if (err){
-                    response.redirect('404');
+                    return response.status(404).send('Could not parse Wikipedia data for: ' + req.query.person);
                 }
                 else{
                     const answers = final;
                     response.send(answers);
                 }
             });
+        } catch(e) {
+            return response.status(500).send('Error parsing response: ' + e.message);
+        }
     });
     
+});
+
+// 404 handler
+app.use((req, res) => {
+    res.status(404).send('Page not found');
 });
 
 //port
